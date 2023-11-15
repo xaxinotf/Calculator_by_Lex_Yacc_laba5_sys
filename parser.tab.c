@@ -72,19 +72,38 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <map>
+#include <string>
 #include "parser.tab.h" // Make sure this file exists and has the necessary token definitions.
 
 extern int yylex();
 extern int yyparse();
 extern FILE *yyin;
 
+std::map<std::string, int> symbolTable;
+
 void yyerror(const char *s) {
   fprintf(stderr, "Error: %s\n", s);
 }
 
+int getValueFromSymbolTable(const char* variable) {
+    std::string varStr(variable);
+    if (symbolTable.find(varStr) == symbolTable.end()) {
+        fprintf(stderr, "Error: Undefined variable '%s'\n", variable);
+        return 0; // Default to 0 if variable is not found
+    }
+    return symbolTable[varStr];
+}
+
+void assignValueToSymbolTable(const char* variable, int value) {
+    std::string varStr(variable);
+    symbolTable[varStr] = value;
+}
+
+
 
 /* Line 189 of yacc.c  */
-#line 88 "parser.tab.c"
+#line 107 "parser.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -131,7 +150,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 15 "parser.y"
+#line 34 "parser.y"
 
     int intValue;
     char *stringValue;
@@ -139,7 +158,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 143 "parser.tab.c"
+#line 162 "parser.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -151,7 +170,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 155 "parser.tab.c"
+#line 174 "parser.tab.c"
 
 #ifdef short
 # undef short
@@ -438,8 +457,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    31,    31,    35,    36,    40,    47,    51,    54,    59,
-      62,    65,    68,    76
+       0,    50,    50,    54,    55,    59,    67,    71,    75,    80,
+      84,    88,    92,   101
 };
 #endif
 
@@ -1349,8 +1368,9 @@ yyreduce:
         case 5:
 
 /* Line 1455 of yacc.c  */
-#line 40 "parser.y"
+#line 59 "parser.y"
     {
+    assignValueToSymbolTable((yyvsp[(1) - (4)].stringValue), (yyvsp[(3) - (4)].intValue));
     printf("Assignment to %s\n", (yyvsp[(1) - (4)].stringValue));
     free((yyvsp[(1) - (4)].stringValue)); // Assuming variable is dynamically allocated in the lexer
   ;}
@@ -1359,19 +1379,20 @@ yyreduce:
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 51 "parser.y"
+#line 71 "parser.y"
     {
-    (yyval.intValue) = (yyvsp[(1) - (1)].intValue);
-  ;}
+      (yyval.intValue) = (yyvsp[(1) - (1)].intValue);
+      printf("Integer: %d\n", (yyval.intValue));  // Додайте цей рядок
+    ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 54 "parser.y"
+#line 75 "parser.y"
     {
-    // Lookup the variable value here, for now just print
-    printf("Variable reference: %s\n", (yyvsp[(1) - (1)].stringValue));
+    (yyval.intValue) = getValueFromSymbolTable((yyvsp[(1) - (1)].stringValue));
+    printf("Variable reference: %s with value %d\n", (yyvsp[(1) - (1)].stringValue), (yyval.intValue));
     free((yyvsp[(1) - (1)].stringValue));
   ;}
     break;
@@ -1379,40 +1400,44 @@ yyreduce:
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 59 "parser.y"
+#line 80 "parser.y"
     {
     (yyval.intValue) = (yyvsp[(1) - (3)].intValue) + (yyvsp[(3) - (3)].intValue);
+    printf("%d + %d = %d\n", (yyvsp[(1) - (3)].intValue), (yyvsp[(3) - (3)].intValue), (yyval.intValue));  // Додайте цей рядок
   ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 62 "parser.y"
+#line 84 "parser.y"
     {
     (yyval.intValue) = (yyvsp[(1) - (3)].intValue) - (yyvsp[(3) - (3)].intValue);
+    printf("%d - %d = %d\n", (yyvsp[(1) - (3)].intValue), (yyvsp[(3) - (3)].intValue), (yyval.intValue));  // Додайте цей рядок
   ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 65 "parser.y"
+#line 88 "parser.y"
     {
     (yyval.intValue) = (yyvsp[(1) - (3)].intValue) * (yyvsp[(3) - (3)].intValue);
+    printf("%d * %d = %d\n", (yyvsp[(1) - (3)].intValue), (yyvsp[(3) - (3)].intValue), (yyval.intValue));  // Додайте цей рядок
   ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 68 "parser.y"
+#line 92 "parser.y"
     {
     if ((yyvsp[(3) - (3)].intValue) == 0) {
         yyerror("Division by zero");
         (yyval.intValue) = 0;
     } else {
         (yyval.intValue) = (yyvsp[(1) - (3)].intValue) / (yyvsp[(3) - (3)].intValue);
+        printf("%d / %d = %d\n", (yyvsp[(1) - (3)].intValue), (yyvsp[(3) - (3)].intValue), (yyval.intValue));  // Додайте цей рядок
     }
   ;}
     break;
@@ -1420,7 +1445,7 @@ yyreduce:
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 76 "parser.y"
+#line 101 "parser.y"
     {
     (yyval.intValue) = (yyvsp[(2) - (3)].intValue);
   ;}
@@ -1429,7 +1454,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 1433 "parser.tab.c"
+#line 1458 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1641,7 +1666,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 81 "parser.y"
+#line 108 "parser.y"
 
 /* C code */
 int main(int argc, char **argv) {

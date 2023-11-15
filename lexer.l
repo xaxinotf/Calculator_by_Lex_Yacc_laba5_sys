@@ -18,13 +18,13 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT})*  /* Matches an identifier */
 %%
 
 ({DIGIT})+ {
-    yylval.intValue = atoi(yytext); // Convert string to integer
-    return INTEGER;                 // Return the INTEGER token
+    yylval.intValue = atoi(yytext); // convertttt string to integer
+    return INTEGER;                 // povertae the INT token
 }
 
 ({LETTER})({LETTER}|{DIGIT})* {
-    yylval.stringValue = strdup(yytext); // Duplicate the string
-    return IDENTIFIER;                   // Return the IDENTIFIER token
+    yylval.stringValue = strdup(yytext); // dublic the string
+    return IDENTIFIER;                   // povertae the indef token
 }
 
 "+"     { return PLUS; }
@@ -46,7 +46,7 @@ IDENTIFIER  {LETTER}({LETTER}|{DIGIT})*  /* Matches an identifier */
 
 %%
 
-// This section can contain additional C functions used by the lexer.
+// tttthis sect can contain addit C funct use by the lexer
 /*
 int main(int argc, char **argv) {
     // This main function is only for testing the lexer independently.
